@@ -36,37 +36,42 @@ func init() {
 	}
 }
 
-func (flows FlowSlice) FilterByType(which TypeFilter) FlowSlice {
-	natFlows := make(FlowSlice, 0, len(flows))
-
-	snat := (which & SNATFilter) > 0
-	dnat := (which & DNATFilter) > 0
-	local := (which & LocalFilter) > 0
-	routed := (which & RoutedFilter) > 0
-
-	for _, flow := range flows {
-		if (snat && isSNAT(flow)) ||
-			(dnat && isDNAT(flow)) ||
-			(local && isLocal(flow)) ||
-			(routed && isRouted(flow)) {
-
-			natFlows = append(natFlows, flow)
-		}
-	}
-
-	return natFlows
-}
-
-func (flows FlowSlice) FilterByProtocol(protocol string) FlowSlice {
+func (flows FlowSlice) Filter(filter func(flow Flow) bool) FlowSlice {
 	filtered := make(FlowSlice, 0, len(flows))
 
 	for _, flow := range flows {
-		if flow.Protocol == protocol {
+		if filter(flow) {
 			filtered = append(filtered, flow)
 		}
 	}
 
 	return filtered
+}
+
+func (flows FlowSlice) FilterByType(which TypeFilter) FlowSlice {
+	snat := (which & SNATFilter) > 0
+	dnat := (which & DNATFilter) > 0
+	local := (which & LocalFilter) > 0
+	routed := (which & RoutedFilter) > 0
+
+	return flows.Filter(func(flow Flow) bool {
+		return ((snat && isSNAT(flow)) ||
+			(dnat && isDNAT(flow)) ||
+			(local && isLocal(flow)) ||
+			(routed && isRouted(flow)))
+	})
+}
+
+func (flows FlowSlice) FilterByProtocol(protocol string) FlowSlice {
+	return flows.Filter(func(flow Flow) bool {
+		return flow.Protocol == protocol
+	})
+}
+
+func (flows FlowSlice) FilterByState(state string) FlowSlice {
+	return flows.Filter(func(flow Flow) bool {
+		return flow.State == state
+	})
 }
 
 func isSNAT(flow Flow) bool {

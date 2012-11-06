@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+type FlowSlice []Flow
+
 type Flow struct {
 	Original  Subflow
 	Reply     Subflow
@@ -26,7 +28,7 @@ type Subflow struct {
 	Packets     uint64
 }
 
-func Flows() ([]Flow, error) {
+func Flows() (FlowSlice, error) {
 	flows := make([]Flow, 0)
 
 	data, err := ioutil.ReadFile("/proc/net/ip_conntrack")

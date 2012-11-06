@@ -36,24 +36,24 @@ func init() {
 	}
 }
 
-func FilterSNAT(flows []Flow) []Flow {
-	return Filter(flows, SNATFilter)
+func (flows FlowSlice) FilterSNAT() FlowSlice {
+	return flows.Filter(SNATFilter)
 }
 
-func FilterDNAT(flows []Flow) []Flow {
-	return Filter(flows, DNATFilter)
+func (flows FlowSlice) FilterDNAT() FlowSlice {
+	return flows.Filter(DNATFilter)
 }
 
-func FilterRouted(flows []Flow) []Flow {
-	return Filter(flows, RoutedFilter)
+func (flows FlowSlice) FilterRouted() FlowSlice {
+	return flows.Filter(RoutedFilter)
 }
 
-func FilterLocal(flows []Flow) []Flow {
-	return Filter(flows, LocalFilter)
+func (flows FlowSlice) FilterLocal() FlowSlice {
+	return flows.Filter(LocalFilter)
 }
 
-func Filter(flows []Flow, which FilterFlag) []Flow {
-	natFlows := make([]Flow, 0, len(flows))
+func (flows FlowSlice) Filter(which FilterFlag) FlowSlice {
+	natFlows := make(FlowSlice, 0, len(flows))
 
 	snat := (which & SNATFilter) > 0
 	dnat := (which & DNATFilter) > 0

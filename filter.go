@@ -57,6 +57,18 @@ func (flows FlowSlice) FilterByType(which TypeFilter) FlowSlice {
 	return natFlows
 }
 
+func (flows FlowSlice) FilterByProtocol(protocol string) FlowSlice {
+	filtered := make(FlowSlice, 0, len(flows))
+
+	for _, flow := range flows {
+		if flow.Protocol == protocol {
+			filtered = append(filtered, flow)
+		}
+	}
+
+	return filtered
+}
+
 func isSNAT(flow Flow) bool {
 	// SNATed flows should reply to our WAN IP, not a LAN IP.
 	if flow.Original.Source.Equal(flow.Reply.Destination) {

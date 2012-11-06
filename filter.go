@@ -4,10 +4,10 @@ import (
 	"net"
 )
 
-type FilterFlag uint8
+type TypeFilter uint8
 
 const (
-	SNATFilter FilterFlag = 1 << iota
+	SNATFilter TypeFilter = 1 << iota
 	DNATFilter
 	RoutedFilter
 	LocalFilter
@@ -36,23 +36,7 @@ func init() {
 	}
 }
 
-func (flows FlowSlice) FilterSNAT() FlowSlice {
-	return flows.Filter(SNATFilter)
-}
-
-func (flows FlowSlice) FilterDNAT() FlowSlice {
-	return flows.Filter(DNATFilter)
-}
-
-func (flows FlowSlice) FilterRouted() FlowSlice {
-	return flows.Filter(RoutedFilter)
-}
-
-func (flows FlowSlice) FilterLocal() FlowSlice {
-	return flows.Filter(LocalFilter)
-}
-
-func (flows FlowSlice) Filter(which FilterFlag) FlowSlice {
+func (flows FlowSlice) FilterByType(which TypeFilter) FlowSlice {
 	natFlows := make(FlowSlice, 0, len(flows))
 
 	snat := (which & SNATFilter) > 0

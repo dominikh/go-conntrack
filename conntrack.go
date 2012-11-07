@@ -3,6 +3,7 @@ package conntrack
 import (
 	"github.com/dominikh/simple-router/netdb"
 
+	"fmt"
 	"io/ioutil"
 	"net"
 	"strconv"
@@ -40,7 +41,7 @@ func Flows() (FlowSlice, error) {
 
 	for _, line := range strings.Split(string(data), "\n") {
 		var (
-			protocolNum int64
+			protocolNum        int64
 			protocol, state    string
 			ttl                uint64
 			unreplied, assured bool
@@ -96,9 +97,9 @@ func Flows() (FlowSlice, error) {
 		rbytes, _ := strconv.ParseUint(reply["bytes"], 10, 64)
 		rpackets, _ := strconv.ParseUint(reply["packets"], 10, 64)
 
-		protoent, err := netdb.GetProtoByNumber(int(protocolNum))
-		if err != nil {
-			return nil, err
+		protoent, ok := netdb.GetProtoByNumber(int(protocolNum))
+		if !ok {
+			return nil, fmt.Errorf("Unknown protocol number %d", protocolNum)
 		}
 
 		flow := Flow{

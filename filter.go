@@ -55,14 +55,14 @@ func (flows FlowSlice) FilterByType(which TypeFilter) FlowSlice {
 	routed := (which & RoutedFilter) > 0
 
 	return flows.Filter(func(flow Flow) bool {
-		return ((snat && isSNAT(flow)) ||
-			(dnat && isDNAT(flow)) ||
-			(local && isLocal(flow)) ||
-			(routed && isRouted(flow)))
+		return ((snat && flow.isSNAT()) ||
+			(dnat && flow.isDNAT()) ||
+			(local && flow.isLocal()) ||
+			(routed && flow.isRouted()))
 	})
 }
 
-func (flows FlowSlice) FilterByProtocol(protocol string) FlowSlice {
+func (flows FlowSlice) FilterByProtocol(protocol netdb.Protoent) FlowSlice {
 	return flows.Filter(func(flow Flow) bool {
 		return flow.Protocol == protocol
 	})
@@ -74,7 +74,7 @@ func (flows FlowSlice) FilterByState(state string) FlowSlice {
 	})
 }
 
-func isSNAT(flow Flow) bool {
+func (flow Flow) isSNAT() bool {
 	// SNATed flows should reply to our WAN IP, not a LAN IP.
 	if flow.Original.Source.Equal(flow.Reply.Destination) {
 		return false
@@ -87,7 +87,7 @@ func isSNAT(flow Flow) bool {
 	return true
 }
 
-func isDNAT(flow Flow) bool {
+func (flow Flow) isDNAT() bool {
 	// Reply must go back to the source; Reply mustn't come from the WAN IP
 	if flow.Original.Source.Equal(flow.Reply.Destination) && !flow.Original.Destination.Equal(flow.Reply.Source) {
 		return true
@@ -101,7 +101,7 @@ func isDNAT(flow Flow) bool {
 	return false
 }
 
-func isLocal(flow Flow) bool {
+func (flow Flow) isLocal() bool {
 	// no NAT
 	if flow.Original.Source.Equal(flow.Reply.Destination) && flow.Original.Destination.Equal(flow.Reply.Source) {
 		// At least one local address
@@ -113,7 +113,7 @@ func isLocal(flow Flow) bool {
 	return false
 }
 
-func isRouted(flow Flow) bool {
+func (flow Flow) isRouted() bool {
 	// no NAT
 	if flow.Original.Source.Equal(flow.Reply.Destination) && flow.Original.Destination.Equal(flow.Reply.Source) {
 		// No local addresses

@@ -1,6 +1,8 @@
 package conntrack
 
 import (
+	"github.com/dominikh/simple-router/netdb"
+
 	"io/ioutil"
 	"net"
 	"strconv"
@@ -12,7 +14,7 @@ type FlowSlice []Flow
 type Flow struct {
 	Original  Subflow
 	Reply     Subflow
-	Protocol  string
+	Protocol  netdb.Protoent
 	State     string
 	Unreplied bool
 	Assured   bool
@@ -38,6 +40,7 @@ func Flows() (FlowSlice, error) {
 
 	for _, line := range strings.Split(string(data), "\n") {
 		var (
+			protocolNum int64
 			protocol, state    string
 			ttl                uint64
 			unreplied, assured bool
@@ -53,6 +56,7 @@ func Flows() (FlowSlice, error) {
 		}
 
 		protocol = fields[0]
+		protocolNum, _ = strconv.ParseInt(fields[1], 10, 32)
 		ttl, _ = strconv.ParseUint(fields[2], 10, 64)
 
 		if protocol == "tcp" {
@@ -91,6 +95,12 @@ func Flows() (FlowSlice, error) {
 		rdport, _ := strconv.ParseUint(reply["dport"], 10, 16)
 		rbytes, _ := strconv.ParseUint(reply["bytes"], 10, 64)
 		rpackets, _ := strconv.ParseUint(reply["packets"], 10, 64)
+
+		protoent, err := netdb.GetProtoByNumber(int(protocolNum))
+		if err != nil {
+			return nil, err
+		}
+
 		flow := Flow{
 			Original: Subflow{
 				Source:      net.ParseIP(original["src"]),
@@ -108,7 +118,7 @@ func Flows() (FlowSlice, error) {
 				Bytes:       rbytes,
 				Packets:     rpackets,
 			},
-			Protocol:  protocol,
+			Protocol:  protoent,
 			State:     state,
 			Unreplied: unreplied,
 			Assured:   assured,

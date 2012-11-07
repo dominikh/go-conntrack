@@ -1,6 +1,8 @@
 package conntrack
 
 import (
+	"github.com/dominikh/simple-router/netdb"
+
 	"net"
 )
 
@@ -64,7 +66,7 @@ func (flows FlowSlice) FilterByType(which TypeFilter) FlowSlice {
 
 func (flows FlowSlice) FilterByProtocol(protocol netdb.Protoent) FlowSlice {
 	return flows.Filter(func(flow Flow) bool {
-		return flow.Protocol == protocol
+		return flow.Protocol.Equal(protocol)
 	})
 }
 

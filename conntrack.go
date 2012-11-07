@@ -1,7 +1,7 @@
 package conntrack
 
 import (
-	"github.com/dominikh/simple-router/netdb"
+	"github.com/dominikh/netdb"
 
 	"fmt"
 	"io/ioutil"

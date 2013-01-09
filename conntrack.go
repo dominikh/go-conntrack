@@ -1,7 +1,7 @@
 package conntrack
 
 import (
-	"github.com/dominikh/netdb"
+	"honnef.co/go/netdb"
 
 	"fmt"
 	"io/ioutil"

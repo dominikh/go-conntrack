@@ -64,7 +64,7 @@ func (flows FlowSlice) FilterByType(which TypeFilter) FlowSlice {
 	})
 }
 
-func (flows FlowSlice) FilterByProtocol(protocol netdb.Protoent) FlowSlice {
+func (flows FlowSlice) FilterByProtocol(protocol *netdb.Protoent) FlowSlice {
 	return flows.Filter(func(flow Flow) bool {
 		return flow.Protocol.Equal(protocol)
 	})

@@ -15,7 +15,7 @@ type FlowSlice []Flow
 type Flow struct {
 	Original  Subflow
 	Reply     Subflow
-	Protocol  netdb.Protoent
+	Protocol  *netdb.Protoent
 	State     string
 	Unreplied bool
 	Assured   bool
@@ -97,8 +97,8 @@ func Flows() (FlowSlice, error) {
 		rbytes, _ := strconv.ParseUint(reply["bytes"], 10, 64)
 		rpackets, _ := strconv.ParseUint(reply["packets"], 10, 64)
 
-		protoent, ok := netdb.GetProtoByNumber(int(protocolNum))
-		if !ok {
+		protoent := netdb.GetProtoByNumber(int(protocolNum))
+		if protoent == nil {
 			return nil, fmt.Errorf("Unknown protocol number %d", protocolNum)
 		}
 

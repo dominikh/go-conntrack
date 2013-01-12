@@ -25,8 +25,8 @@ type Flow struct {
 type Subflow struct {
 	Source      net.IP
 	Destination net.IP
-	SPort       uint16
-	DPort       uint16
+	SPort       int
+	DPort       int
 	Bytes       uint64
 	Packets     uint64
 }
@@ -106,16 +106,16 @@ func Flows() (FlowSlice, error) {
 			Original: Subflow{
 				Source:      net.ParseIP(original["src"]),
 				Destination: net.ParseIP(original["dst"]),
-				SPort:       uint16(osport),
-				DPort:       uint16(odport),
+				SPort:       int(osport),
+				DPort:       int(odport),
 				Bytes:       obytes,
 				Packets:     opackets,
 			},
 			Reply: Subflow{
 				Source:      net.ParseIP(reply["src"]),
 				Destination: net.ParseIP(reply["dst"]),
-				SPort:       uint16(rsport),
-				DPort:       uint16(rdport),
+				SPort:       int(rsport),
+				DPort:       int(rdport),
 				Bytes:       rbytes,
 				Packets:     rpackets,
 			},

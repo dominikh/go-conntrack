@@ -1,3 +1,5 @@
+// Package conntrack allows reading and filtering entries from the
+// conntrack table of Netfilter.
 package conntrack
 
 import (

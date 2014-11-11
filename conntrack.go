@@ -1,6 +1,6 @@
 // Package conntrack allows reading and filtering entries from the
 // conntrack table of Netfilter.
-package conntrack
+package conntrack // import "honnef.co/go/conntrack"
 
 import (
 	"honnef.co/go/netdb"

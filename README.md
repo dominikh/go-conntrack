@@ -3,7 +3,7 @@
 ## Install
 
 ```sh
-go get -u honnef.co/go/conntrack
+go get honnef.co/go/conntrack
 ```
 
 ## Documentation
